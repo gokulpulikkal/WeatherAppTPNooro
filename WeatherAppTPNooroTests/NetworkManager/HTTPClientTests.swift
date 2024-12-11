@@ -10,14 +10,14 @@ import Testing
 @testable import WeatherAppTPNooro
 
 struct HTTPClientTests {
-    
+
     var urlSession: URLSession
-    
+
     init() {
         let config = URLSessionConfiguration.ephemeral
         config.protocolClasses = [URLProtocolMock.self]
         URLProtocolMock.mockResponses = [:]
-        urlSession = URLSession(configuration: config)
+        self.urlSession = URLSession(configuration: config)
     }
 
     @Test
@@ -30,7 +30,7 @@ struct HTTPClientTests {
 
         #expect(request.url == expectedRequest.url)
     }
-    
+
     @Test
     func makeRequestFailTest() throws {
         let url = URL(string: "https://www.apple.com/newsroom/rss-feed.rss")!
@@ -56,7 +56,7 @@ struct HTTPClientTests {
         let result = try await httpClient.httpData(from: mockRequest)
         #expect(result == expectedData)
     }
-    
+
     @Test
     func failedHTTPDataTest() async throws {
         URLProtocolMock.mockResponses = [:]
@@ -69,9 +69,8 @@ struct HTTPClientTests {
         await #expect(performing: {
             try await httpClient.httpData(from: mockRequest)
         }, throws: { error in
-            return expectedError.localizedDescription == error.localizedDescription
+            expectedError.localizedDescription == error.localizedDescription
         })
-        
     }
 
 }

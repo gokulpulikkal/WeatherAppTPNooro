@@ -8,7 +8,6 @@
 import Foundation
 
 struct APIConstant {
-    static let baseURL = "welmonde-52696.el.r.appspot.com"
-    static let mockAPI = "run.mocky.io"
-    static let apiKey = ""
+    static let baseURL = "api.weatherapi.com"
+    static let apiKey = "0d44654393ee4347a5f223434241012"
 }

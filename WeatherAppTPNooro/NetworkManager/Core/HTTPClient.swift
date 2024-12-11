@@ -35,7 +35,7 @@ class HTTPClient: HTTPClientProtocol {
         var urlComponents = URLComponents()
         urlComponents.scheme = requestData.scheme
         urlComponents.host = requestData.host
-        urlComponents.path = requestData.endPoint
+        urlComponents.path = requestData.apiVersion+requestData.endPoint
 
         if let queryParams = requestData.queryParams {
             var queryItems: [URLQueryItem] = urlComponents.queryItems ?? []

@@ -8,5 +8,5 @@
 import Foundation
 
 struct APIVersion {
-    static let version1 = ""
+    static let version1 = "/v1/"
 }

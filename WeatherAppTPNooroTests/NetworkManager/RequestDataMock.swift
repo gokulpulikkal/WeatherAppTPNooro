@@ -31,6 +31,15 @@ enum RequestDataMock: RequestDataProtocol {
         }
     }
 
+    var apiVersion: String {
+        switch self {
+        case .mock_one:
+            ""
+        case .mock_two:
+            ""
+        }
+    }
+
     var endPoint: String {
         switch self {
         case .mock_one:
