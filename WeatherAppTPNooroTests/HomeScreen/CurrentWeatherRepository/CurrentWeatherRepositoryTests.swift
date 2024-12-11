@@ -17,7 +17,7 @@ struct CurrentWeatherRepositoryTests {
     init() {
         let config = URLSessionConfiguration.ephemeral
         config.protocolClasses = [URLProtocolMock.self]
-        URLProtocolMock.mockResponses = [:]
+        URLProtocolMock.clearMockResponses()
         let urlSession = URLSession(configuration: config)
         self.httpClient = HTTPClient(session: urlSession)
         self.currentWeatherRepository = CurrentWeatherRepository(httpClient: httpClient)
@@ -28,11 +28,7 @@ struct CurrentWeatherRepositoryTests {
         // Setting up the network layer to return something
         let currentWeatherRequestData = WeatherRequestData.currentWeather(location: "buffalo")
         let request = try httpClient.getRequest(requestData: currentWeatherRequestData)
-        URLProtocolMock.mockResponses[request.url!] = (
-            data: CurrentWeatherMockData.sampleBuffaloWeatherData,
-            response: nil,
-            error: nil
-        )
+        URLProtocolMock.addMockResponse(for: request.url!, data: CurrentWeatherMockData.sampleBuffaloWeatherData, response: nil, error: nil)
 
         let expectedResponse = CurrentWeatherMockData.sampleBuffaloWeather
 
@@ -40,6 +36,7 @@ struct CurrentWeatherRepositoryTests {
         let returnedResult = try await currentWeatherRepository.currentWeather(cityName: "buffalo")
 
         #expect(returnedResult == expectedResponse)
+        URLProtocolMock.clearMockResponses()
     }
 
     @Test
@@ -48,13 +45,14 @@ struct CurrentWeatherRepositoryTests {
         let currentWeatherRequestData = WeatherRequestData.currentWeather(location: cityName)
         let request = try httpClient.getRequest(requestData: currentWeatherRequestData)
         let expectedError = RequestError.noResponse
-        URLProtocolMock.mockResponses[request.url!] = (data: nil, response: nil, error: expectedError)
+        URLProtocolMock.addMockResponse(for: request.url!, data: nil, response: nil, error: expectedError)
 
         await #expect(performing: {
             try await currentWeatherRepository.currentWeather(cityName: cityName)
         }, throws: { error in
             expectedError.localizedDescription == error.localizedDescription
         })
+        URLProtocolMock.clearMockResponses()
     }
 
     @Test
@@ -62,17 +60,14 @@ struct CurrentWeatherRepositoryTests {
         let cityName = "errorCity"
         let currentWeatherRequestData = WeatherRequestData.currentWeather(location: cityName)
         let request = try httpClient.getRequest(requestData: currentWeatherRequestData)
-        URLProtocolMock.mockResponses[request.url!] = (
-            data: CurrentWeatherMockData.sampleErrorData,
-            response: nil,
-            error: RequestError.decode
-        )
+        URLProtocolMock.addMockResponse(for: request.url!, data: CurrentWeatherMockData.sampleErrorData, response: nil, error: RequestError.decode)
         await #expect(performing: {
             try await currentWeatherRepository.currentWeather(cityName: cityName)
         }, throws: { _ in
             // If there is an error that is it for this test
             true
         })
+        URLProtocolMock.clearMockResponses()
     }
 
 }

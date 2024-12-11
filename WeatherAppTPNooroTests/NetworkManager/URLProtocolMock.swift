@@ -10,6 +10,7 @@ import Foundation
 class URLProtocolMock: URLProtocol {
 
     static var mockResponses: [URL: (data: Data?, response: URLResponse?, error: Error?)] = [:]
+    static let lock = NSLock()
 
     /// say we want to handle all types of request
     override class func canInit(with request: URLRequest) -> Bool {
@@ -23,6 +24,9 @@ class URLProtocolMock: URLProtocol {
 
     override func startLoading() {
         if let url = request.url, let mockResponse = URLProtocolMock.mockResponses[url] {
+            URLProtocolMock.lock.lock()
+            defer { URLProtocolMock.lock.unlock() }
+
             if let error = mockResponse.error {
                 client?.urlProtocol(self, didFailWithError: error)
             } else {
@@ -41,4 +45,16 @@ class URLProtocolMock: URLProtocol {
 
     /// this method is required but doesn't need to do anything
     override func stopLoading() {}
+
+    class func addMockResponse(for url: URL, data: Data?, response: URLResponse?, error: Error?) {
+        lock.lock()
+        defer { lock.unlock() }
+        mockResponses[url] = (data, response, error)
+    }
+
+    class func clearMockResponses() {
+        lock.lock()
+        defer { lock.unlock() }
+        mockResponses.removeAll()
+    }
 }

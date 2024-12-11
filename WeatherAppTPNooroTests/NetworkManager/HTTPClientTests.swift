@@ -16,7 +16,7 @@ struct HTTPClientTests {
     init() {
         let config = URLSessionConfiguration.ephemeral
         config.protocolClasses = [URLProtocolMock.self]
-        URLProtocolMock.mockResponses = [:]
+        URLProtocolMock.clearMockResponses()
         self.urlSession = URLSession(configuration: config)
     }
 
@@ -48,13 +48,14 @@ struct HTTPClientTests {
         // Setting up the data
         let url = URL(string: "https://www.apple.com/newsroom/rss-feed.rss")!
         let expectedData = "Hacking with Swift!".data(using: .utf8)
-        URLProtocolMock.mockResponses[url] = (data: expectedData, response: nil, error: nil)
+        URLProtocolMock.addMockResponse(for: url, data: expectedData, response: nil, error: nil)
         let mockRequest = RequestDataMock.mock_one
 
         // Create client
         let httpClient = HTTPClient(session: urlSession)
         let result = try await httpClient.httpData(from: mockRequest)
         #expect(result == expectedData)
+        URLProtocolMock.clearMockResponses()
     }
 
     @Test
@@ -62,7 +63,7 @@ struct HTTPClientTests {
         URLProtocolMock.mockResponses = [:]
         let url = URL(string: "https://www.apple.com/newsroom/rss-feed/two.rss")!
         let expectedError = RequestError.unknown
-        URLProtocolMock.mockResponses[url] = (data: nil, response: nil, error: expectedError)
+        URLProtocolMock.addMockResponse(for: url, data: nil, response: nil, error: expectedError)
         let mockRequest = RequestDataMock.mock_two
         // Create client
         let httpClient = HTTPClient(session: urlSession)
@@ -71,6 +72,7 @@ struct HTTPClientTests {
         }, throws: { error in
             expectedError.localizedDescription == error.localizedDescription
         })
+        URLProtocolMock.clearMockResponses()
     }
 
 }
