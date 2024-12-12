@@ -9,7 +9,7 @@ import SwiftUI
 
 struct HomeWeatherFooterView: View {
 
-    @State var currentWeather: CurrentWeather
+    var currentWeather: CurrentWeather
 
     var body: some View {
         HStack(spacing: 56) {
@@ -17,7 +17,7 @@ struct HomeWeatherFooterView: View {
                 Text("Humidity")
                     .font(.system(size: 12))
                     .foregroundStyle(.textColorTertiary)
-                Text("20%")
+                Text((currentWeather.current?.humidity ?? 0) / 100, format: .percent)
                     .font(.system(size: 15))
                     .foregroundStyle(.textColorSecondary)
             }
@@ -26,7 +26,7 @@ struct HomeWeatherFooterView: View {
                 Text("UV")
                     .font(.system(size: 12))
                     .foregroundStyle(.textColorTertiary)
-                Text("4")
+                Text(currentWeather.current?.uvIndex ?? 0, format: .number)
                     .font(.system(size: 15))
                     .foregroundStyle(.textColorSecondary)
             }
@@ -35,9 +35,12 @@ struct HomeWeatherFooterView: View {
                 Text("Feels like")
                     .font(.system(size: 8))
                     .foregroundStyle(.textColorTertiary)
-                Text("38°")
-                    .font(.system(size: 15))
-                    .foregroundStyle(.textColorSecondary)
+                HStack(spacing: 0) {
+                    Text(currentWeather.current?.feelsLikeCelsius ?? 0, format: .number.precision(.fractionLength(2)))
+                    Text("°")
+                }
+                .font(.system(size: 15))
+                .foregroundStyle(.textColorSecondary)
             }
         }
         .padding(16)

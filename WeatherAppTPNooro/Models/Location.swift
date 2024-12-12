@@ -18,3 +18,4 @@ struct Location: Codable {
 // MARK: - Equatable
 
 extension Location: Equatable {}
+extension Location: Hashable {}

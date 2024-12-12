@@ -21,10 +21,16 @@ struct CurrentWeather: Codable, Identifiable {
     }
 }
 
-// MARK: - Equatable
+// MARK: - Equatable, Hashable
 
-extension CurrentWeather: Equatable {
+extension CurrentWeather: Equatable, Hashable {
     static func == (lhs: CurrentWeather, rhs: CurrentWeather) -> Bool {
         lhs.location == rhs.location && lhs.current == rhs.current
+    }
+
+    func hash(into hasher: inout Hasher) {
+        // Combine the hash values of the location and current properties
+        hasher.combine(location)
+        hasher.combine(current)
     }
 }

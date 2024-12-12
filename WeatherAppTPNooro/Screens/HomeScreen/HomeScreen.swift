@@ -9,35 +9,40 @@ import SwiftUI
 
 struct HomeScreen: View {
 
-    @AppStorage("selectedCity")
-    var selectedCity = "Hyderabad"
+    @AppStorage("selectedCityCords")
+    var selectedCityCords = ""
     var viewModel = ViewModel()
 
     var body: some View {
-        if selectedCity.isEmpty {
+        ZStack {
             noCitySelectedView
-        } else {
+                .opacity(selectedCityCords.isEmpty ? 1 : 0)
             Group {
                 switch viewModel.loadState {
                 case .loading:
                     ProgressView()
                 case let .success(currentWeather):
-                    ZStack {
-                        VStack(spacing: 36) {
-                            HomeWeatherHighlightView(currentWeather: currentWeather)
-                            HomeWeatherFooterView(currentWeather: currentWeather)
-                        }
-                        SearchScreenView()
+                    VStack(spacing: 36) {
+                        HomeWeatherHighlightView(currentWeather: currentWeather)
+                        HomeWeatherFooterView(currentWeather: currentWeather)
                     }
                 case .failure:
                     errorMessageView
                 }
             }
-            .task {
-                await viewModel.getCurrentWeather(for: selectedCity)
+            .opacity(selectedCityCords.isEmpty ? 0 : 1)
+            SearchScreenView()
+        }
+        .onChange(of: selectedCityCords) {
+            Task {
+                await viewModel.getCurrentWeather(for: selectedCityCords)
             }
         }
+        .task {
+            await viewModel.getCurrentWeather(for: selectedCityCords)
+        }
     }
+
 }
 
 extension HomeScreen {

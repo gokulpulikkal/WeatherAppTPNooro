@@ -18,3 +18,5 @@ struct WeatherCondition: Codable {
         case code
     }
 }
+
+extension WeatherCondition: Hashable {}

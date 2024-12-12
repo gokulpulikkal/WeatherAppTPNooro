@@ -13,8 +13,6 @@ enum SearchRequestErrors: Error {
         switch self {
         case .noResultError:
             "No results found!"
-        default:
-            "Unknown error"
         }
     }
 }

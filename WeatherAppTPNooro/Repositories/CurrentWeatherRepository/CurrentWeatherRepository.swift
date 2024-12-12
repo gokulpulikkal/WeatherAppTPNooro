@@ -28,7 +28,7 @@ class CurrentWeatherRepository: CurrentWeatherRepositoryProtocol {
                 try await withThrowingTaskGroup(of: CurrentWeather.self) { group in
                     for location in locations {
                         group.addTask {
-                            try await self.currentWeather(cityName: location.name)
+                            try await self.currentWeather(cityName: "\(location.lat),\(location.lon)")
                         }
                     }
 

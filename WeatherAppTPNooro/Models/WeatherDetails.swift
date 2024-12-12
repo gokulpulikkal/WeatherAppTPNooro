@@ -31,7 +31,7 @@ struct WeatherDetails: Codable {
 
 // MARK: - Equatable
 
-extension WeatherDetails: Equatable {
+extension WeatherDetails: Equatable, Hashable {
     static func == (lhs: WeatherDetails, rhs: WeatherDetails) -> Bool {
         return lhs.temperatureCelsius == rhs.temperatureCelsius && lhs.humidity == rhs.humidity
     }

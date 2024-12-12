@@ -31,6 +31,7 @@ extension HomeScreen {
 
         func getCurrentWeather(for cityName: String) async {
             do {
+                loadState = .loading
                 let currentWeather = try await currentWeatherRepository.currentWeather(cityName: cityName)
                 loadState = .success(currentWeather)
             } catch {

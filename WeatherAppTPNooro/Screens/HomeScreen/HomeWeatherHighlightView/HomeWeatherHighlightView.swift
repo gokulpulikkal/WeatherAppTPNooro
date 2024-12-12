@@ -9,7 +9,7 @@ import SwiftUI
 
 struct HomeWeatherHighlightView: View {
 
-    @State var currentWeather: CurrentWeather
+    var currentWeather: CurrentWeather
 
     var body: some View {
         VStack(spacing: 16) {

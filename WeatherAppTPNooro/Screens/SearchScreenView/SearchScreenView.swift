@@ -12,6 +12,9 @@ struct SearchScreenView: View {
     @State var searchKey = ""
     @State var viewModel = ViewModel()
     @FocusState var isSearchFieldFocused: Bool
+    @AppStorage("selectedCityCords")
+    var selectedCityCords = ""
+    @State var selectedWeatherLocation: CurrentWeather? = nil
 
     var body: some View {
         ZStack {
@@ -29,10 +32,12 @@ struct SearchScreenView: View {
                         ProgressView()
                             .opacity(viewModel.isSearchInProgress ? 1 : 0)
                     case .success:
-                        List {
+                        List(selection: $selectedWeatherLocation) {
                             ForEach(viewModel.currentWeatherList) { currentWeather in
                                 getLocationListRow(currentWeather: currentWeather)
+                                    .tag(currentWeather)
                                     .listRowSeparator(.hidden)
+                                    .listRowBackground(Color.clear)
                             }
                         }
                         .listStyle(.plain)
@@ -44,7 +49,6 @@ struct SearchScreenView: View {
                 .opacity(isSearchFieldFocused || !viewModel.currentWeatherList.isEmpty ? 1 : 0)
             }
         }
-
         .onChange(of: searchKey) {
             if searchKey.isEmpty {
                 viewModel.clearSearchResults()
@@ -52,6 +56,12 @@ struct SearchScreenView: View {
                 Task {
                     await viewModel.locations(for: searchKey)
                 }
+            }
+        }
+        .onChange(of: selectedWeatherLocation) {
+            if let selectedWeatherLocation {
+                selectedCityCords = "\(selectedWeatherLocation.location.lat),\(selectedWeatherLocation.location.lon)"
+                dismissSearchResultView()
             }
         }
     }
@@ -76,14 +86,7 @@ extension SearchScreenView {
             .foregroundStyle(.textColorTertiary)
             .onTapGesture {
                 if isSearchFieldFocused || !viewModel.currentWeatherList.isEmpty {
-                    UIApplication.shared.sendAction(
-                        #selector(UIResponder.resignFirstResponder),
-                        to: nil,
-                        from: nil,
-                        for: nil
-                    )
-                    viewModel.clearSearchResults()
-                    searchKey = ""
+                    dismissSearchResultView()
                 }
             }
         }
@@ -128,6 +131,17 @@ extension SearchScreenView {
         }
         .padding(16)
         .background(RoundedRectangle(cornerRadius: 16).foregroundStyle(.boxBackground))
+    }
+
+    func dismissSearchResultView() {
+        UIApplication.shared.sendAction(
+            #selector(UIResponder.resignFirstResponder),
+            to: nil,
+            from: nil,
+            for: nil
+        )
+        viewModel.clearSearchResults()
+        searchKey = ""
     }
 }
 
