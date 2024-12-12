@@ -30,40 +30,4 @@ class HTTPClient: HTTPClientProtocol {
             throw RequestError.unexpectedStatusCode
         }
     }
-
-    func getRequest(requestData: RequestDataProtocol) throws -> URLRequest {
-        var urlComponents = URLComponents()
-        urlComponents.scheme = requestData.scheme
-        urlComponents.host = requestData.host
-        urlComponents.path = requestData.apiVersion+requestData.endPoint
-
-        if let queryParams = requestData.queryParams {
-            var queryItems: [URLQueryItem] = urlComponents.queryItems ?? []
-            queryParams.keys.forEach { key in
-                if let value = queryParams[key] as? String {
-                    let queryItem = URLQueryItem(name: key, value: value)
-                    queryItems.append(queryItem)
-                }
-            }
-            urlComponents.queryItems = queryItems
-        }
-
-        // Ensure that the URL can be constructed
-        guard let url = urlComponents.url else {
-            throw RequestError.decode
-        }
-
-        // Create a URLRequest using the constructed URL and the HTTP method and headers from the requestType
-        var request = URLRequest(url: url)
-        request.httpMethod = requestData.method.rawValue
-        request.allHTTPHeaderFields = requestData.header
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-
-        if let body = requestData.params {
-            let serializedBody = try JSONSerialization.data(withJSONObject: body, options: [])
-            request.httpBody = serializedBody
-        }
-
-        return request
-    }
 }

@@ -11,56 +11,49 @@ import Testing
 
 struct CurrentWeatherRepositoryTests {
 
-    var httpClient: any HTTPClientProtocol
+    var httpClientMock: any HTTPClientProtocolMock
     var currentWeatherRepository: any CurrentWeatherRepositoryProtocol
 
     init() {
-        let config = URLSessionConfiguration.ephemeral
-        config.protocolClasses = [URLProtocolMock.self]
-        URLProtocolMock.clearMockResponses()
-        let urlSession = URLSession(configuration: config)
-        self.httpClient = HTTPClient(session: urlSession)
-        self.currentWeatherRepository = CurrentWeatherRepository(httpClient: httpClient)
+        self.httpClientMock = HTTPClientMock()
+        self.currentWeatherRepository = CurrentWeatherRepository(httpClient: httpClientMock)
     }
 
     @Test
     func gettingCurrentWeather() async throws {
         // Setting up the network layer to return something
-        let currentWeatherRequestData = WeatherRequestData.currentWeather(location: "buffalo")
-        let request = try httpClient.getRequest(requestData: currentWeatherRequestData)
-        URLProtocolMock.addMockResponse(for: request.url!, data: CurrentWeatherMockData.sampleBuffaloWeatherData, response: nil, error: nil)
+        let cityName = "buffalo"
+        httpClientMock.setImplementation(handler: {
+            CurrentWeatherMockData.sampleBuffaloWeatherData
+        })
 
         let expectedResponse = CurrentWeatherMockData.sampleBuffaloWeather
 
         // Testing the actual implementation
-        let returnedResult = try await currentWeatherRepository.currentWeather(cityName: "buffalo")
+        let returnedResult = try await currentWeatherRepository.currentWeather(cityName: cityName)
 
         #expect(returnedResult == expectedResponse)
-        URLProtocolMock.clearMockResponses()
     }
 
     @Test
     func noResultForCityName() async throws {
         let cityName = "noName"
-        let currentWeatherRequestData = WeatherRequestData.currentWeather(location: cityName)
-        let request = try httpClient.getRequest(requestData: currentWeatherRequestData)
         let expectedError = RequestError.noResponse
-        URLProtocolMock.addMockResponse(for: request.url!, data: nil, response: nil, error: expectedError)
 
         await #expect(performing: {
             try await currentWeatherRepository.currentWeather(cityName: cityName)
         }, throws: { error in
             expectedError.localizedDescription == error.localizedDescription
         })
-        URLProtocolMock.clearMockResponses()
     }
 
     @Test
     func parsingError() async throws {
         let cityName = "errorCity"
-        let currentWeatherRequestData = WeatherRequestData.currentWeather(location: cityName)
-        let request = try httpClient.getRequest(requestData: currentWeatherRequestData)
-        URLProtocolMock.addMockResponse(for: request.url!, data: CurrentWeatherMockData.sampleErrorData, response: nil, error: RequestError.decode)
+        httpClientMock.setImplementation(handler: {
+            CurrentWeatherMockData.sampleErrorData
+        })
+
         await #expect(performing: {
             try await currentWeatherRepository.currentWeather(cityName: cityName)
         }, throws: { _ in

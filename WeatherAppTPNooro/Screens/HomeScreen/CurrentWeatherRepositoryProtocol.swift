@@ -19,6 +19,4 @@ protocol CurrentWeatherRepositoryProtocolMock: CurrentWeatherRepositoryProtocol 
     /// Sets the weather response for the city name. Purely for testing
     func setCurrentWeather(cityName: String, currentWeather: CurrentWeather)
 
-    func currentWeather(cityName: String) async throws -> CurrentWeather
-
 }
