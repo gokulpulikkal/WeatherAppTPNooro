@@ -70,12 +70,14 @@ extension SearchScreenView {
                         print("Locations list changed, discarding results.")
                         return
                     }
-                    if let locationIndex = currentWeatherList
-                        .firstIndex(where: {
-                            $0.location.name + $0.location.region + $0.location.country == currentWeather.location
-                                .name + currentWeather.location.region + currentWeather.location.country
-                        })
-                    {
+                    if let locationIndex = currentWeatherList.firstIndex(where: {
+                        // Round latitudes and longitudes down to one decimal point before comparing
+                        let roundedLat = (currentWeather.location.lat * 10).rounded(.down) / 10
+                        let roundedLon = (currentWeather.location.lon * 10).rounded(.down) / 10
+
+                        return ($0.location.lat * 10).rounded(.down) / 10 == roundedLat &&
+                               ($0.location.lon * 10).rounded(.down) / 10 == roundedLon
+                    }) {
                         currentWeatherList[locationIndex].current = currentWeather.current
                     }
                 }
