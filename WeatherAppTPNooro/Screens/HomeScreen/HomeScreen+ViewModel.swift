@@ -21,6 +21,8 @@ extension HomeScreen {
         /// The load state of fetching the user's workout plans.
         var loadState: LoadState<CurrentWeather, any Error> = .loading
 
+        // MARK: Initializer
+
         init(currentWeatherRepository: CurrentWeatherRepositoryProtocol = CurrentWeatherRepository()) {
             self.currentWeatherRepository = currentWeatherRepository
         }

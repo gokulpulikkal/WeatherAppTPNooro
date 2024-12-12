@@ -21,4 +21,9 @@ class CurrentWeatherRepository: CurrentWeatherRepositoryProtocol {
         let currentWeather = try JSONDecoder().decode(CurrentWeather.self, from: data)
         return currentWeather
     }
+
+    func currentWeathers(for locations: [Location]) async throws -> [CurrentWeather] {
+        // Implement this one
+        []
+    }
 }

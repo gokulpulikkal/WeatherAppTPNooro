@@ -22,9 +22,12 @@ struct HomeScreen: View {
                 case .loading:
                     ProgressView()
                 case let .success(currentWeather):
-                    VStack(spacing: 36) {
-                        HomeWeatherHighlightView(currentWeather: currentWeather)
-                        HomeWeatherFooterView(currentWeather: currentWeather)
+                    ZStack {
+                        VStack(spacing: 36) {
+                            HomeWeatherHighlightView(currentWeather: currentWeather)
+                            HomeWeatherFooterView(currentWeather: currentWeather)
+                        }
+                        SearchScreenView()
                     }
                 case .failure:
                     errorMessageView

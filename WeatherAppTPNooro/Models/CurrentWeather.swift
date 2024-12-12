@@ -7,9 +7,18 @@
 
 import Foundation
 
-struct CurrentWeather: Codable {
+struct CurrentWeather: Codable, Identifiable {
+    var id: String {
+        UUID().uuidString
+    }
+
     var location: Location
-    var current: WeatherDetails
+    var current: WeatherDetails?
+
+    private enum CodingKeys: String, CodingKey {
+        case location
+        case current
+    }
 }
 
 // MARK: - Equatable

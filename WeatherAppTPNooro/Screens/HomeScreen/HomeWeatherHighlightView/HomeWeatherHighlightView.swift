@@ -13,7 +13,7 @@ struct HomeWeatherHighlightView: View {
 
     var body: some View {
         VStack(spacing: 16) {
-            AsyncImage(url: URL(string: "https:" + currentWeather.current.condition.icon)) { image in
+            AsyncImage(url: URL(string: "https:" + (currentWeather.current?.condition.icon ?? ""))) { image in
                 image.resizable()
             } placeholder: {
                 ProgressView()
@@ -29,7 +29,7 @@ struct HomeWeatherHighlightView: View {
                     .frame(width: 21, height: 21)
             }
             HStack {
-                Text(String(Int(currentWeather.current.temperatureCelsius)))
+                Text(String(Int(currentWeather.current?.temperatureCelsius ?? 0)))
                     .foregroundStyle(.textColorPrimary)
                     .font(.system(size: 70))
                     .fontWeight(.semibold)
