@@ -64,6 +64,12 @@ extension SearchScreenView {
         private func getCurrentWeather(for locations: [Location]) async {
             do {
                 for try await currentWeather in currentWeatherRepository.currentWeathers(for: locations) {
+                    // Check if the locations list has changed before updating the weather
+                    guard locations == locationsList else {
+                        // If locations have changed, discard the current weather data
+                        print("Locations list changed, discarding results.")
+                        return
+                    }
                     if let locationIndex = currentWeatherList
                         .firstIndex(where: {
                             $0.location.name + $0.location.region + $0.location.country == currentWeather.location
@@ -81,6 +87,7 @@ extension SearchScreenView {
         func clearSearchResults() {
             locationsList = []
             currentWeatherList = []
+            loadState = .loading
         }
     }
 }

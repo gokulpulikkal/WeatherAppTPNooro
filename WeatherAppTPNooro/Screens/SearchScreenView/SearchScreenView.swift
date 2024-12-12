@@ -46,8 +46,12 @@ struct SearchScreenView: View {
         }
 
         .onChange(of: searchKey) {
-            Task {
-                await viewModel.locations(for: searchKey)
+            if searchKey.isEmpty {
+                viewModel.clearSearchResults()
+            } else {
+                Task {
+                    await viewModel.locations(for: searchKey)
+                }
             }
         }
     }
