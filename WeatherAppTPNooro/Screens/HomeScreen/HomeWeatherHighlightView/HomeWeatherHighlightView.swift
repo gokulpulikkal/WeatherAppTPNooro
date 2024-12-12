@@ -21,6 +21,7 @@ struct HomeWeatherHighlightView: View {
             .frame(width: 123, height: 123)
             HStack {
                 Text(currentWeather.location.name)
+                    .foregroundStyle(.textColorPrimary)
                     .font(.system(size: 30))
                     .bold()
                 Image(systemName: "location.fill")
@@ -29,12 +30,14 @@ struct HomeWeatherHighlightView: View {
             }
             HStack {
                 Text(String(Int(currentWeather.current.temperatureCelsius)))
+                    .foregroundStyle(.textColorPrimary)
                     .font(.system(size: 70))
                     .fontWeight(.semibold)
                 VStack {
                     Text("°")
                         .font(.system(size: 40))
                         .fontWeight(.thin)
+                        .foregroundStyle(.textColorPrimary)
                     Spacer()
                 }
                 .frame(height: 85)
