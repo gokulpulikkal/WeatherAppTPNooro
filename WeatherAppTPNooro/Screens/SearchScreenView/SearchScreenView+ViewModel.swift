@@ -10,7 +10,7 @@ import Observation
 
 extension SearchScreenView {
 
-    @Observable
+    @MainActor @Observable
     class ViewModel {
         // MARK: Dependencies
 

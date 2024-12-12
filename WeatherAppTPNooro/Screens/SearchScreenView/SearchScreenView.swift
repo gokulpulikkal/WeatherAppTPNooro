@@ -42,7 +42,7 @@ struct SearchScreenView: View {
                         }
                         .listStyle(.plain)
                     case .failure:
-                        Text("Error in searching for location!")
+                        errorMessageView
                     }
                 }
                 .padding(5)
@@ -131,6 +131,18 @@ extension SearchScreenView {
         }
         .padding(16)
         .background(RoundedRectangle(cornerRadius: 16).foregroundStyle(.boxBackground))
+    }
+    
+    var errorMessageView: some View {
+        VStack {
+            Image(systemName: "exclamationmark.circle")
+                .resizable()
+                .frame(width: 50, height: 50)
+            Text("The searched city is not found")
+                .font(.system(size: 20))
+                .bold()
+            Spacer()
+        }
     }
 
     func dismissSearchResultView() {
