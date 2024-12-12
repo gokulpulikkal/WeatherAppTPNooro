@@ -14,34 +14,37 @@ struct SearchScreenView: View {
     @FocusState var isSearchFieldFocused: Bool
 
     var body: some View {
-        VStack {
-            searchTextFieldView
-                .padding(.top, 24)
-            Spacer()
+        ZStack {
+            Rectangle()
+                .foregroundStyle(.backgroundColorPrimary)
+                .opacity(isSearchFieldFocused || !viewModel.currentWeatherList.isEmpty ? 1 : 0)
             VStack {
-                switch viewModel.loadState {
-                case .loading:
-                    ProgressView()
-                        .opacity(viewModel.isSearchInProgress ? 1 : 0)
-                case .success:
-                    List {
-                        ForEach(viewModel.currentWeatherList) { currentWeather in
-                            HStack {
-                                Text(currentWeather.location.name)
-                                if let weatherDetails = currentWeather.current {
-                                    Text("\(weatherDetails.feelsLikeCelsius)")
-                                }
+                searchTextFieldView
+                    .padding(.top, 24)
+                    .padding(.horizontal, 24)
+                Spacer()
+                VStack {
+                    switch viewModel.loadState {
+                    case .loading:
+                        ProgressView()
+                            .opacity(viewModel.isSearchInProgress ? 1 : 0)
+                    case .success:
+                        List {
+                            ForEach(viewModel.currentWeatherList) { currentWeather in
+                                getLocationListRow(currentWeather: currentWeather)
+                                    .listRowSeparator(.hidden)
                             }
                         }
+                        .listStyle(.plain)
+                    case .failure:
+                        Text("Error in searching for location!")
                     }
-                case .failure:
-                    Text("Error in searching for location!")
                 }
+                .padding(5)
+                .opacity(isSearchFieldFocused || !viewModel.currentWeatherList.isEmpty ? 1 : 0)
             }
-            .ignoresSafeArea()
-            .opacity(isSearchFieldFocused || !viewModel.currentWeatherList.isEmpty ? 1 : 0)
         }
-        .padding(.horizontal, 24)
+
         .onChange(of: searchKey) {
             Task {
                 await viewModel.locations(for: searchKey)
@@ -79,6 +82,45 @@ extension SearchScreenView {
                     searchKey = ""
                 }
             }
+        }
+        .padding(16)
+        .background(RoundedRectangle(cornerRadius: 16).foregroundStyle(.boxBackground))
+    }
+
+    func getLocationListRow(currentWeather: CurrentWeather) -> some View {
+        HStack {
+            VStack(alignment: .leading, spacing: 0) {
+                Text(currentWeather.location.name)
+                    .lineLimit(1)
+                    .font(.system(size: 20))
+                    .bold()
+                if let weatherDetails = currentWeather.current {
+                    HStack {
+                        Text(String(Int(weatherDetails.temperatureCelsius)))
+                            .foregroundStyle(.textColorPrimary)
+                            .font(.system(size: 60))
+                            .fontWeight(.semibold)
+                        VStack {
+                            Text("°")
+                                .font(.system(size: 20))
+                                .fontWeight(.thin)
+                                .foregroundStyle(.textColorPrimary)
+                            Spacer()
+                        }
+                        .frame(height: 55)
+                    }
+                }
+            }
+            Spacer()
+            AsyncImage(url: URL(
+                string: "https:" +
+                    (currentWeather.current?.condition.icon ?? "")
+            )) { image in
+                image.resizable()
+            } placeholder: {
+                ProgressView()
+            }
+            .frame(width: 83, height: 83)
         }
         .padding(16)
         .background(RoundedRectangle(cornerRadius: 16).foregroundStyle(.boxBackground))

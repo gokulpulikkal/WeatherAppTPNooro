@@ -50,6 +50,7 @@ extension SearchScreenView {
                     currentWeatherList = locationsList.map { location in CurrentWeather(location: location) }
                     isSearchInProgress = false
                     loadState = .success(currentWeatherList)
+                    await getCurrentWeather(for: locationsList)
                 } else {
                     loadState = .failure(SearchRequestErrors.noResultError)
                     isSearchInProgress = false
@@ -59,15 +60,24 @@ extension SearchScreenView {
                 isSearchInProgress = false
             }
         }
-        
+
         private func getCurrentWeather(for locations: [Location]) async {
             do {
-                
+                for try await currentWeather in currentWeatherRepository.currentWeathers(for: locations) {
+                    if let locationIndex = currentWeatherList
+                        .firstIndex(where: {
+                            $0.location.name + $0.location.region + $0.location.country == currentWeather.location
+                                .name + currentWeather.location.region + currentWeather.location.country
+                        })
+                    {
+                        currentWeatherList[locationIndex].current = currentWeather.current
+                    }
+                }
             } catch {
                 print("Failed to get currentWeather for all locations \(error.localizedDescription)")
             }
         }
-        
+
         func clearSearchResults() {
             locationsList = []
             currentWeatherList = []

@@ -9,7 +9,8 @@ import Foundation
 @testable import WeatherAppTPNooro
 
 class CurrentWeatherRepositoryMock: CurrentWeatherRepositoryProtocolMock {
-
+    
+    
     var mockCurrentWeather: [String: WeatherAppTPNooro.CurrentWeather] = [:]
 
     func setCurrentWeather(cityName: String, currentWeather: CurrentWeather) {
@@ -21,6 +22,12 @@ class CurrentWeatherRepositoryMock: CurrentWeatherRepositoryProtocolMock {
             return mockCurrentWeather[cityName]!
         } else {
             throw RequestError.unknown
+        }
+    }
+    
+    func currentWeathers(for locations: [WeatherAppTPNooro.Location]) -> AsyncThrowingStream<WeatherAppTPNooro.CurrentWeather, any Error> {
+        AsyncThrowingStream { continuation in
+            
         }
     }
 }

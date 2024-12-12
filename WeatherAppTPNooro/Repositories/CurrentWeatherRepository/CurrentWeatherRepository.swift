@@ -22,8 +22,22 @@ class CurrentWeatherRepository: CurrentWeatherRepositoryProtocol {
         return currentWeather
     }
 
-    func currentWeathers(for locations: [Location]) async throws -> [CurrentWeather] {
-        // Implement this one
-        []
+    func currentWeathers(for locations: [Location]) -> AsyncThrowingStream<CurrentWeather, Error> {
+        AsyncThrowingStream { continuation in
+            Task {
+                try await withThrowingTaskGroup(of: CurrentWeather.self) { group in
+                    for location in locations {
+                        group.addTask {
+                            try await self.currentWeather(cityName: location.name)
+                        }
+                    }
+
+                    for try await currentWeather in group {
+                        continuation.yield(currentWeather)
+                    }
+                    continuation.finish()
+                }
+            }
+        }
     }
 }
