@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// A protocol for types that manage the retrieval of current weather of the location or locations
 protocol CurrentWeatherRepositoryProtocol {
 
     /// returns the current weather for the city
