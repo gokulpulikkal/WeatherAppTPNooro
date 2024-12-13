@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// A value to store different types of Request methods available
 enum RequestMethod: String {
     case get = "GET"
     case post = "POST"

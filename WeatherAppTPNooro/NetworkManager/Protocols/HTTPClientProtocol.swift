@@ -7,12 +7,22 @@
 
 import Foundation
 
+/// A protocol for the types that manages the API requests
 protocol HTTPClientProtocol {
+
+    /// function declaration that makes the API call and returns the Data
     func httpData(from requestData: RequestDataProtocol) async throws -> Data
+
+    /// function declaration that will return URL request by processing the requestData of type `RequestDataProtocol`
     func getRequest(requestData: RequestDataProtocol) throws -> URLRequest
+
 }
 
 extension HTTPClientProtocol {
+    // MARK: Default implementations
+
+    /// Default implementations for the URL request creation from the request data
+    /// This can be overridden but most of the time this will suffice
     func getRequest(requestData: RequestDataProtocol) throws -> URLRequest {
         var urlComponents = URLComponents()
         urlComponents.scheme = requestData.scheme
@@ -48,9 +58,4 @@ extension HTTPClientProtocol {
 
         return request
     }
-}
-
-protocol HTTPClientProtocolMock: HTTPClientProtocol {
-
-    func setImplementation(handler: @escaping () -> Data)
 }

@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// Protocol for managing the data for the URL reqeust
 protocol RequestDataProtocol {
 
     /// Request method type
@@ -30,13 +31,16 @@ protocol RequestDataProtocol {
     /// Header values for request
     var header: [String: String]? { get }
 
+    /// Host for the end point
     var host: String { get }
 
+    /// Query params that should be part of the url requests
     var queryParams: [String: Any]? { get }
 }
 
-/// Default values
 extension RequestDataProtocol {
+
+    // MARK: Default values
 
     var apiVersion: String {
         APIVersion.version1

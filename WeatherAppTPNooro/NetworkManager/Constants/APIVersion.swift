@@ -7,6 +7,7 @@
 
 import Foundation
 
-struct APIVersion {
+/// A value to store different API versions
+enum APIVersion {
     static let version1 = "/v1/"
 }
