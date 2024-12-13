@@ -11,16 +11,10 @@ import Testing
 
 struct CurrentWeatherRepositoryTests {
 
-    var httpClientMock: any HTTPClientProtocolMock
-    var currentWeatherRepository: any CurrentWeatherRepositoryProtocol
-
-    init() {
-        self.httpClientMock = HTTPClientMock()
-        self.currentWeatherRepository = CurrentWeatherRepository(httpClient: httpClientMock)
-    }
-
     @Test
     func gettingCurrentWeather() async throws {
+        let httpClientMock = HTTPClientMock()
+        let currentWeatherRepository = CurrentWeatherRepository(httpClient: httpClientMock)
         // Setting up the network layer to return something
         let selectedCityId = 1234
         httpClientMock.setImplementation(handler: {
@@ -37,6 +31,9 @@ struct CurrentWeatherRepositoryTests {
 
     @Test
     func noResultForCityName() async throws {
+        let httpClientMock = HTTPClientMock()
+        let currentWeatherRepository = CurrentWeatherRepository(httpClient: httpClientMock)
+        
         let selectedCityId = 394
         let expectedError = RequestError.noResponse
 
@@ -49,6 +46,9 @@ struct CurrentWeatherRepositoryTests {
 
     @Test
     func parsingError() async throws {
+        let httpClientMock = HTTPClientMock()
+        let currentWeatherRepository = CurrentWeatherRepository(httpClient: httpClientMock)
+        
         let selectedCityId = 22322
         httpClientMock.setImplementation(handler: {
             CurrentWeatherMockData.sampleErrorData
@@ -60,7 +60,6 @@ struct CurrentWeatherRepositoryTests {
             // If there is an error that is it for this test
             true
         })
-        URLProtocolMock.clearMockResponses()
     }
 
 }

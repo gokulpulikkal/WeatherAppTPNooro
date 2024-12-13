@@ -6,6 +6,7 @@
 //
 
 import Foundation
+@testable import WeatherAppTPNooro
 
 class URLProtocolMock: URLProtocol {
 
@@ -38,9 +39,12 @@ class URLProtocolMock: URLProtocol {
                 if let data = mockResponse.data {
                     client?.urlProtocol(self, didLoad: data)
                 }
-                client?.urlProtocolDidFinishLoading(self)
+                
             }
+        } else {
+            client?.urlProtocol(self, didFailWithError: RequestError.noResponse)
         }
+        client?.urlProtocolDidFinishLoading(self)
     }
 
     /// this method is required but doesn't need to do anything

@@ -10,16 +10,11 @@ import Testing
 
 struct SearchLocationRepositoryTests {
 
-    var httpClientMock: any HTTPClientProtocolMock
-    var searchLocationRepository: any SearchLocationRepositoryProtocol
-
-    init() {
-        self.httpClientMock = HTTPClientMock()
-        self.searchLocationRepository = SearchLocationRepository(httpClient: httpClientMock)
-    }
-
     @Test
     func gettingSuccessfulResponse() async throws {
+        let httpClientMock = HTTPClientMock()
+        let searchLocationRepository = SearchLocationRepository(httpClient: httpClientMock)
+        
         let keyword = "lond"
         httpClientMock.setImplementation(handler: {
             LocationsMockData.sampleCitiesData
@@ -30,9 +25,12 @@ struct SearchLocationRepositoryTests {
 
         #expect(returnedResult == expectedResponse)
     }
-    
+
     @Test
     func noResultForKeyWord() async throws {
+        let httpClientMock = HTTPClientMock()
+        let searchLocationRepository = SearchLocationRepository(httpClient: httpClientMock)
+        
         let keyword = ""
         let expectedError = RequestError.noResponse
         await #expect(performing: {
@@ -41,9 +39,12 @@ struct SearchLocationRepositoryTests {
             expectedError.localizedDescription == error.localizedDescription
         })
     }
-    
+
     @Test
     func parsingError() async throws {
+        let httpClientMock = HTTPClientMock()
+        let searchLocationRepository = SearchLocationRepository(httpClient: httpClientMock)
+        
         let keyword = "errorCity"
         httpClientMock.setImplementation(handler: {
             LocationsMockData.sampleErrorData
@@ -55,6 +56,5 @@ struct SearchLocationRepositoryTests {
             // If there is an error that is it for this test
             true
         })
-        URLProtocolMock.clearMockResponses()
     }
 }

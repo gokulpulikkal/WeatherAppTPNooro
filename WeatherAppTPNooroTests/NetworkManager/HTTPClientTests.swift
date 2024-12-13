@@ -16,7 +16,6 @@ struct HTTPClientTests {
     init() {
         let config = URLSessionConfiguration.ephemeral
         config.protocolClasses = [URLProtocolMock.self]
-        URLProtocolMock.clearMockResponses()
         self.urlSession = URLSession(configuration: config)
     }
 
@@ -44,35 +43,33 @@ struct HTTPClientTests {
 
     @Test
     func successfulHTTPDataTest() async throws {
-        URLProtocolMock.mockResponses = [:]
+        
         // Setting up the data
-        let url = URL(string: "https://www.apple.com/newsroom/rss-feed.rss")!
-        let expectedData = "Hacking with Swift!".data(using: .utf8)
-        URLProtocolMock.addMockResponse(for: url, data: expectedData, response: nil, error: nil)
-        let mockRequest = RequestDataMock.mock_one
-
-        // Create client
         let httpClient = HTTPClient(session: urlSession)
-        let result = try await httpClient.httpData(from: mockRequest)
+        let mockRequestData = RequestDataMock.mock_one
+        let mockRequest = try httpClient.getRequest(requestData: mockRequestData)
+        let expectedData = "Hacking with Swift!".data(using: .utf8)
+        URLProtocolMock.addMockResponse(for: mockRequest.url!, data: expectedData, response: HTTPURLResponse(), error: nil)
+        
+        let result = try await httpClient.httpData(from: mockRequestData)
         #expect(result == expectedData)
-        URLProtocolMock.clearMockResponses()
     }
 
-//    @Test
-//    func failedHTTPDataTest() async throws {
-//        URLProtocolMock.mockResponses = [:]
-//        let url = URL(string: "https://www.apple.com/newsroom/rss-feed/two.rss")!
-//        let expectedError = RequestError.unknown
-//        URLProtocolMock.addMockResponse(for: url, data: nil, response: nil, error: expectedError)
-//        let mockRequest = RequestDataMock.mock_two
-//        // Create client
-//        let httpClient = HTTPClient(session: urlSession)
-//        await #expect(performing: {
-//            try await httpClient.httpData(from: mockRequest)
-//        }, throws: { error in
-//            expectedError.localizedDescription == error.localizedDescription
-//        })
-//        URLProtocolMock.clearMockResponses()
-//    }
+    @Test
+    func failedHTTPDataTest() async throws {
+        // Setting up the data
+        let httpClient = HTTPClient(session: urlSession)
+        let mockRequestData = RequestDataMock.mock_two
+        let mockRequest = try httpClient.getRequest(requestData: mockRequestData)
+        
+        let expectedError = RequestError.unknown
+        URLProtocolMock.addMockResponse(for: mockRequest.url!, data: nil, response: HTTPURLResponse(), error: expectedError)
+        
+        await #expect(performing: {
+            try await httpClient.httpData(from: mockRequestData)
+        }, throws: { error in
+            expectedError.localizedDescription == error.localizedDescription
+        })
+    }
 
 }
