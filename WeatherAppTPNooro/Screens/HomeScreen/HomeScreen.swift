@@ -33,6 +33,7 @@ struct HomeScreen: View {
             .opacity(selectedCityCords.isEmpty ? 0 : 1)
             SearchScreenView()
         }
+        .ignoresSafeArea(.keyboard)
         .onChange(of: selectedCityCords) {
             Task {
                 await viewModel.getCurrentWeather(for: selectedCityCords)
