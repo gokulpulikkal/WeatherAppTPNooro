@@ -11,7 +11,7 @@ struct HomeScreen: View {
 
     // MARK: Properties
 
-    /// variable that retrieves the persisting city coordinates from previous session
+    /// variable that retrieves the persisting city id from previous session
     @AppStorage("selectedCityId")
     var selectedCityId: Int = -1
 

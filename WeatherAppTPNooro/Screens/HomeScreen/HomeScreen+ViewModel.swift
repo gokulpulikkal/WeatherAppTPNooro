@@ -31,7 +31,7 @@ extension HomeScreen {
 
         // MARK: Functions
 
-        /// Retrieves the current weather for the city coordinates string
+        /// Retrieves the current weather for the city id
         func getCurrentWeather(for selectedCityId: Int) async {
             do {
                 loadState = .loading

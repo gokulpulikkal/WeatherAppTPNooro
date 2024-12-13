@@ -17,7 +17,7 @@ struct SearchScreenView: View {
     /// A variable that holds value weather the search text field is in focus or not
     @FocusState var isSearchFieldFocused: Bool
 
-    /// variable that saves the selected city's coordinates string to apps persistent storage
+    /// variable that saves the selected city's id to apps persistent storage
     @AppStorage("selectedCityId")
     var selectedCityID: Int = -1
 
