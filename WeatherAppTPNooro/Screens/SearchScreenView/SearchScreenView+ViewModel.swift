@@ -116,6 +116,11 @@ extension SearchScreenView {
                             print("Either task cancelled or locations list changed! this result is not longer needed")
                             return
                         }
+
+                        // I had to use the lat and lon here because of the following reason
+                        // - Names of the location and current weather sometimes are different
+                        // - lat and lon was the only option to correctly find the location to match with
+                        // the new current weather
                         let roundedLat = (currentWeather.location.lat * 10).rounded(.down) / 10
                         let roundedLon = (currentWeather.location.lon * 10).rounded(.down) / 10
 
