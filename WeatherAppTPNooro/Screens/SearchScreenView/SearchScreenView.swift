@@ -32,14 +32,16 @@ struct SearchScreenView: View {
                         ProgressView()
                             .opacity(viewModel.isSearchInProgress ? 1 : 0)
                     case .success:
-                        List(selection: $selectedWeatherLocation) {
-                            ForEach(viewModel.currentWeatherList) { currentWeather in
+                        List(
+                            viewModel.currentWeatherList,
+                            id: \.self,
+                            selection: $selectedWeatherLocation,
+                            rowContent: { currentWeather in
                                 getLocationListRow(currentWeather: currentWeather)
-                                    .tag(currentWeather)
                                     .listRowSeparator(.hidden)
                                     .listRowBackground(Color.clear)
                             }
-                        }
+                        )
                         .listStyle(.plain)
                     case .failure:
                         errorMessageView
@@ -64,6 +66,7 @@ struct SearchScreenView: View {
                 dismissSearchResultView()
             }
         }
+        .animation(.bouncy, value: viewModel.currentWeatherList)
     }
 }
 
@@ -132,7 +135,7 @@ extension SearchScreenView {
         .padding(16)
         .background(RoundedRectangle(cornerRadius: 16).foregroundStyle(.boxBackground))
     }
-    
+
     var errorMessageView: some View {
         VStack {
             Image(systemName: "exclamationmark.circle")
