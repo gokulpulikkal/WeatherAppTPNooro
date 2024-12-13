@@ -45,6 +45,7 @@ struct HomeWeatherFooterView: View {
         }
         .padding(16)
         .background(RoundedRectangle(cornerRadius: 16).foregroundStyle(.boxBackground))
+        .frame(width: 274)
     }
 }
 

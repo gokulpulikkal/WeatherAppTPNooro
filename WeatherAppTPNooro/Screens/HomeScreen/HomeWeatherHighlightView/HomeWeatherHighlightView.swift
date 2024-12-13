@@ -13,7 +13,8 @@ struct HomeWeatherHighlightView: View {
 
     var body: some View {
         VStack(spacing: 16) {
-            AsyncImage(url: URL(string: "https:" + (currentWeather.current?.condition.icon ?? ""))) { image in
+            
+            AsyncImage(url: URL(string: "https:" + (currentWeather.current?.condition.icon.replacingOccurrences(of: "64x64", with: "128x128") ?? ""))) { image in
                 image.resizable()
             } placeholder: {
                 ProgressView()
