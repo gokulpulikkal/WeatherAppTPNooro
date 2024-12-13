@@ -12,6 +12,7 @@ class CurrentWeatherRepositoryMock: CurrentWeatherRepositoryProtocolMock {
     
     
     var mockCurrentWeather: [Int: WeatherAppTPNooro.CurrentWeather] = [:]
+    
 
     func setCurrentWeather(selectedCityId: Int, currentWeather: CurrentWeather) {
         mockCurrentWeather[selectedCityId] = currentWeather
@@ -27,7 +28,12 @@ class CurrentWeatherRepositoryMock: CurrentWeatherRepositoryProtocolMock {
     
     func currentWeathers(for locations: [WeatherAppTPNooro.Location]) -> AsyncThrowingStream<WeatherAppTPNooro.CurrentWeather, any Error> {
         AsyncThrowingStream { continuation in
-            
+            for location in locations {
+                if let locationId = location.id, let currentWeatherForLocation = mockCurrentWeather[locationId] {
+                    continuation.yield(currentWeatherForLocation)
+                }
+            }
+            continuation.finish()
         }
     }
 }

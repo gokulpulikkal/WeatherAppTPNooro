@@ -33,7 +33,7 @@ struct CurrentWeatherRepositoryTests {
     func noResultForCityName() async throws {
         let httpClientMock = HTTPClientMock()
         let currentWeatherRepository = CurrentWeatherRepository(httpClient: httpClientMock)
-        
+
         let selectedCityId = 394
         let expectedError = RequestError.noResponse
 
@@ -48,7 +48,7 @@ struct CurrentWeatherRepositoryTests {
     func parsingError() async throws {
         let httpClientMock = HTTPClientMock()
         let currentWeatherRepository = CurrentWeatherRepository(httpClient: httpClientMock)
-        
+
         let selectedCityId = 22322
         httpClientMock.setImplementation(handler: {
             CurrentWeatherMockData.sampleErrorData
