@@ -7,15 +7,34 @@
 
 import Foundation
 
+/// A model representing details about current weather of the location
 struct WeatherDetails: Codable {
+
+    /// temperature in celcius
     var temperatureCelsius: Double
+
+    /// temperature in Fahrenheit
     var temperatureFahrenheit: Double
+
+    /// value indicating weather it is day time or not in the location
     var isDay: Double
+
+    /// weather condition object
     var condition: WeatherCondition
+
+    /// Humidity value
     var humidity: Double
+
+    /// Feels like temperature in Celsius
     var feelsLikeCelsius: Double
+
+    /// Feels like temperature in Fahrenheit
     var feelsLikeFahrenheit: Double
+
+    /// UVindex value
     var uvIndex: Double
+
+    // MARK: Codable
 
     enum CodingKeys: String, CodingKey {
         case temperatureCelsius = "temp_c"
@@ -29,10 +48,10 @@ struct WeatherDetails: Codable {
     }
 }
 
-// MARK: - Equatable
+// MARK: - Equatable, Hashable
 
 extension WeatherDetails: Equatable, Hashable {
     static func == (lhs: WeatherDetails, rhs: WeatherDetails) -> Bool {
-        return lhs.temperatureCelsius == rhs.temperatureCelsius && lhs.humidity == rhs.humidity
+        lhs.temperatureCelsius == rhs.temperatureCelsius && lhs.humidity == rhs.humidity
     }
 }

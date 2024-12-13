@@ -7,17 +7,30 @@
 
 import Foundation
 
-struct CurrentWeather: Codable, Identifiable {
-    
-    var id: String {
-        return "\(location.name)\(location.country)\(location.region)"
-    }
+/// A model representing details about current weather of the location
+struct CurrentWeather: Codable {
+
+    /// The location object for which the current weather is for
     var location: Location
+
+    /// The weather details object which stores all the metadata
     var current: WeatherDetails?
+
+    // MARK: Codable
 
     private enum CodingKeys: String, CodingKey {
         case location
         case current
+    }
+}
+
+// MARK: - Identifiable
+
+extension CurrentWeather: Identifiable {
+    /// Computed id property for the object
+    /// not obtained from the API. But needed for the identifiable protocol conformance
+    var id: String {
+        "\(location.name)\(location.country)\(location.region)"
     }
 }
 
