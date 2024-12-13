@@ -13,6 +13,8 @@ struct HomeScreen: View {
     var selectedCityCords = ""
     var viewModel = ViewModel()
 
+    // MARK: Body
+
     var body: some View {
         ZStack {
             noCitySelectedView
@@ -48,6 +50,9 @@ struct HomeScreen: View {
 }
 
 extension HomeScreen {
+    // MARK: Subviews
+
+    /// A view that shows no city selected prompting the user to search for a view
     var noCitySelectedView: some View {
         VStack(spacing: 20) {
             Text("No City Selected")
@@ -59,6 +64,8 @@ extension HomeScreen {
         }
     }
 
+    /// A view show an error for displaying error info to the user in case the wether response for the
+    /// selected city is not available for some reason from the API
     var errorMessageView: some View {
         VStack {
             Image(systemName: "exclamationmark.circle")
