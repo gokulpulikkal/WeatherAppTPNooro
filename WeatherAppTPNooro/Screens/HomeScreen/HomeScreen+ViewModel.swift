@@ -29,10 +29,10 @@ extension HomeScreen {
 
         // MARK: Functions
 
-        func getCurrentWeather(for cityName: String) async {
+        func getCurrentWeather(for cityCoordinates: String) async {
             do {
                 loadState = .loading
-                let currentWeather = try await currentWeatherRepository.currentWeather(cityName: cityName)
+                let currentWeather = try await currentWeatherRepository.currentWeather(cityCoordinates: cityCoordinates)
                 loadState = .success(currentWeather)
             } catch {
                 loadState = .failure(error)

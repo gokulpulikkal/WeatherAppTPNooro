@@ -26,10 +26,10 @@ struct HomeScreen_ViewModelTests {
     @Test
     func loadStateUpdate() async throws {
         #expect(viewModel.loadState == .loading)
-        let cityName = "buffalo"
-        currentWeatherRepositoryMock.setCurrentWeather(cityName: cityName, currentWeather: CurrentWeatherMockData.sampleBuffaloWeather)
+        let cityCoordinates = "buffalo"
+        currentWeatherRepositoryMock.setCurrentWeather(cityCoordinates: cityCoordinates, currentWeather: CurrentWeatherMockData.sampleBuffaloWeather)
         
-        await viewModel.getCurrentWeather(for: cityName)
+        await viewModel.getCurrentWeather(for: cityCoordinates)
         
         #expect(viewModel.loadState == .success(CurrentWeatherMockData.sampleBuffaloWeather))
     }
@@ -37,9 +37,9 @@ struct HomeScreen_ViewModelTests {
     @Test
     func loadStateFail() async throws {
         #expect(viewModel.loadState == .loading)
-        let cityName = "ErrorBuffalo"
+        let cityCoordinates = "ErrorBuffalo"
         
-        await viewModel.getCurrentWeather(for: cityName)
+        await viewModel.getCurrentWeather(for: cityCoordinates)
         #expect(viewModel.loadState != .success(CurrentWeatherMockData.sampleBuffaloWeather))
         
         #expect(viewModel.loadState == .failure(RequestError.noResponse))

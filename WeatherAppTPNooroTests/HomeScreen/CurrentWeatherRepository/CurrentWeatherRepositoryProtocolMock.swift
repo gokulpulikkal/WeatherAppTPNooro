@@ -11,6 +11,6 @@ import Foundation
 protocol CurrentWeatherRepositoryProtocolMock: CurrentWeatherRepositoryProtocol {
 
     /// Sets the weather response for the city name. Purely for testing
-    func setCurrentWeather(cityName: String, currentWeather: CurrentWeather)
+    func setCurrentWeather(cityCoordinates: String, currentWeather: CurrentWeather)
 
 }

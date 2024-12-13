@@ -13,13 +13,13 @@ class CurrentWeatherRepositoryMock: CurrentWeatherRepositoryProtocolMock {
     
     var mockCurrentWeather: [String: WeatherAppTPNooro.CurrentWeather] = [:]
 
-    func setCurrentWeather(cityName: String, currentWeather: CurrentWeather) {
-        mockCurrentWeather[cityName] = currentWeather
+    func setCurrentWeather(cityCoordinates: String, currentWeather: CurrentWeather) {
+        mockCurrentWeather[cityCoordinates] = currentWeather
     }
 
-    func currentWeather(cityName: String) async throws -> WeatherAppTPNooro.CurrentWeather {
-        if mockCurrentWeather[cityName] != nil {
-            return mockCurrentWeather[cityName]!
+    func currentWeather(cityCoordinates: String) async throws -> WeatherAppTPNooro.CurrentWeather {
+        if mockCurrentWeather[cityCoordinates] != nil {
+            return mockCurrentWeather[cityCoordinates]!
         } else {
             throw RequestError.unknown
         }
