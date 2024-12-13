@@ -12,8 +12,8 @@ struct HomeScreen: View {
     // MARK: Properties
 
     /// variable that retrieves the persisting city coordinates from previous session
-    @AppStorage("selectedCityCords")
-    var selectedCityCords = ""
+    @AppStorage("selectedCityId")
+    var selectedCityId: Int = -1
 
     /// Manages the state and logic for this view.
     var viewModel = ViewModel()
@@ -23,7 +23,7 @@ struct HomeScreen: View {
     var body: some View {
         ZStack {
             noCitySelectedView
-                .opacity(selectedCityCords.isEmpty ? 1 : 0)
+                .opacity(selectedCityId < 0 ? 1 : 0)
             Group {
                 switch viewModel.loadState {
                 case .loading:
@@ -37,17 +37,17 @@ struct HomeScreen: View {
                     errorMessageView
                 }
             }
-            .opacity(selectedCityCords.isEmpty ? 0 : 1)
+            .opacity(selectedCityId < 0 ? 0 : 1)
             SearchScreenView()
         }
         .ignoresSafeArea(.keyboard)
-        .onChange(of: selectedCityCords) {
+        .onChange(of: selectedCityId) {
             Task {
-                await viewModel.getCurrentWeather(for: selectedCityCords)
+                await viewModel.getCurrentWeather(for: selectedCityId)
             }
         }
         .task {
-            await viewModel.getCurrentWeather(for: selectedCityCords)
+            await viewModel.getCurrentWeather(for: selectedCityId)
         }
         .animation(.bouncy, value: viewModel.loadState)
     }

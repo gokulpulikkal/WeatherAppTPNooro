@@ -18,8 +18,8 @@ struct SearchScreenView: View {
     @FocusState var isSearchFieldFocused: Bool
 
     /// variable that saves the selected city's coordinates string to apps persistent storage
-    @AppStorage("selectedCityCords")
-    var selectedCityCords = ""
+    @AppStorage("selectedCityId")
+    var selectedCityID: Int = -1
 
     // MARK: Body
 
@@ -67,7 +67,7 @@ struct SearchScreenView: View {
         }
         .onChange(of: viewModel.selectedWeatherLocation) {
             if let selectedWeatherLocation = viewModel.selectedWeatherLocation {
-                selectedCityCords = "\(selectedWeatherLocation.location.lat),\(selectedWeatherLocation.location.lon)"
+                selectedCityID = selectedWeatherLocation.location.id ?? -1
                 dismissSearchResultView()
             }
         }

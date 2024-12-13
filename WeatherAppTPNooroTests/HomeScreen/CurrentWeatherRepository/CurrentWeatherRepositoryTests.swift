@@ -22,7 +22,7 @@ struct CurrentWeatherRepositoryTests {
     @Test
     func gettingCurrentWeather() async throws {
         // Setting up the network layer to return something
-        let cityCoordinates = "buffalo"
+        let selectedCityId = 1234
         httpClientMock.setImplementation(handler: {
             CurrentWeatherMockData.sampleBuffaloWeatherData
         })
@@ -30,18 +30,18 @@ struct CurrentWeatherRepositoryTests {
         let expectedResponse = CurrentWeatherMockData.sampleBuffaloWeather
 
         // Testing the actual implementation
-        let returnedResult = try await currentWeatherRepository.currentWeather(cityCoordinates: cityCoordinates)
+        let returnedResult = try await currentWeatherRepository.currentWeather(selectedCityId: selectedCityId)
 
         #expect(returnedResult == expectedResponse)
     }
 
     @Test
     func noResultForCityName() async throws {
-        let cityCoordinates = "noName"
+        let selectedCityId = 394
         let expectedError = RequestError.noResponse
 
         await #expect(performing: {
-            try await currentWeatherRepository.currentWeather(cityCoordinates: cityCoordinates)
+            try await currentWeatherRepository.currentWeather(selectedCityId: selectedCityId)
         }, throws: { error in
             expectedError.localizedDescription == error.localizedDescription
         })
@@ -49,13 +49,13 @@ struct CurrentWeatherRepositoryTests {
 
     @Test
     func parsingError() async throws {
-        let cityCoordinates = "errorCity"
+        let selectedCityId = 22322
         httpClientMock.setImplementation(handler: {
             CurrentWeatherMockData.sampleErrorData
         })
 
         await #expect(performing: {
-            try await currentWeatherRepository.currentWeather(cityCoordinates: cityCoordinates)
+            try await currentWeatherRepository.currentWeather(selectedCityId: selectedCityId)
         }, throws: { _ in
             // If there is an error that is it for this test
             true

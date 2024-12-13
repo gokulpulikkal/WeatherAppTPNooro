@@ -11,15 +11,15 @@ import Foundation
 class CurrentWeatherRepositoryMock: CurrentWeatherRepositoryProtocolMock {
     
     
-    var mockCurrentWeather: [String: WeatherAppTPNooro.CurrentWeather] = [:]
+    var mockCurrentWeather: [Int: WeatherAppTPNooro.CurrentWeather] = [:]
 
-    func setCurrentWeather(cityCoordinates: String, currentWeather: CurrentWeather) {
-        mockCurrentWeather[cityCoordinates] = currentWeather
+    func setCurrentWeather(selectedCityId: Int, currentWeather: CurrentWeather) {
+        mockCurrentWeather[selectedCityId] = currentWeather
     }
 
-    func currentWeather(cityCoordinates: String) async throws -> WeatherAppTPNooro.CurrentWeather {
-        if mockCurrentWeather[cityCoordinates] != nil {
-            return mockCurrentWeather[cityCoordinates]!
+    func currentWeather(selectedCityId: Int) async throws -> WeatherAppTPNooro.CurrentWeather {
+        if mockCurrentWeather[selectedCityId] != nil {
+            return mockCurrentWeather[selectedCityId]!
         } else {
             throw RequestError.unknown
         }

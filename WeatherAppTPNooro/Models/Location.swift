@@ -10,6 +10,9 @@ import Foundation
 /// A model representing metadata about of the location
 struct Location: Codable {
 
+    /// id of the location
+    var id: Int?
+
     /// name of the location
     var name: String
 

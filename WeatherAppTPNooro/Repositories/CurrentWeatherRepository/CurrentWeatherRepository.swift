@@ -23,8 +23,8 @@ class CurrentWeatherRepository: CurrentWeatherRepositoryProtocol {
     // MARK: Functions
 
     /// returns the current weather for the city
-    func currentWeather(cityCoordinates: String) async throws -> CurrentWeather {
-        let currentWeatherRequestData = WeatherRequestData.currentWeather(location: cityCoordinates)
+    func currentWeather(selectedCityId: Int) async throws -> CurrentWeather {
+        let currentWeatherRequestData = WeatherRequestData.currentWeather(selectedCityId: selectedCityId)
         let data = try await httpClient.httpData(from: currentWeatherRequestData)
         let currentWeather = try JSONDecoder().decode(CurrentWeather.self, from: data)
         return currentWeather
@@ -39,8 +39,10 @@ class CurrentWeatherRepository: CurrentWeatherRepositoryProtocol {
             Task {
                 try await withThrowingTaskGroup(of: CurrentWeather.self) { group in
                     for location in locations {
-                        group.addTask {
-                            try await self.currentWeather(cityCoordinates: "\(location.lat),\(location.lon)")
+                        if let locationId = location.id {
+                            group.addTask {
+                                try await self.currentWeather(selectedCityId: locationId)
+                            }
                         }
                     }
 

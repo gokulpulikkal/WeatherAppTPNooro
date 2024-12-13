@@ -9,7 +9,7 @@ import Foundation
 
 enum WeatherRequestData: RequestDataProtocol {
 
-    case currentWeather(location: String)
+    case currentWeather(selectedCityId: Int)
 
     var method: RequestMethod {
         switch self {
@@ -41,10 +41,10 @@ enum WeatherRequestData: RequestDataProtocol {
 
     var queryParams: [String: Any]? {
         switch self {
-        case let .currentWeather(location):
+        case let .currentWeather(selectedCityId):
             [
                 "key": APIConstant.apiKey,
-                "q": location
+                "q": "id:\(selectedCityId)"
             ]
         }
     }
