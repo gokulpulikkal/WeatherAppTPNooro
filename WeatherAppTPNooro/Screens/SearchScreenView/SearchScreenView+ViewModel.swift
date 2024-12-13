@@ -88,15 +88,20 @@ extension SearchScreenView {
                             print("Either task cancelled or locations list changed! this result is not longer needed")
                             return
                         }
-                        if let locationIndex = currentWeatherList.firstIndex(where: {
-                            // Round latitudes and longitudes down to one decimal point before comparing
-                            let roundedLat = (currentWeather.location.lat * 10).rounded(.down) / 10
-                            let roundedLon = (currentWeather.location.lon * 10).rounded(.down) / 10
+                        let roundedLat = (currentWeather.location.lat * 10).rounded(.down) / 10
+                        let roundedLon = (currentWeather.location.lon * 10).rounded(.down) / 10
 
-                            return ($0.location.lat * 10).rounded(.down) / 10 == roundedLat &&
-                                ($0.location.lon * 10).rounded(.down) / 10 == roundedLon
-                        }) {
-                            currentWeatherList[locationIndex].current = currentWeather.current
+                        // Find the indices of matching locations
+                        let matchingIndices = currentWeatherList.enumerated().compactMap { (index, weather) -> Int? in
+                            let roundedWeatherLat = (weather.location.lat * 10).rounded(.down) / 10
+                            let roundedWeatherLon = (weather.location.lon * 10).rounded(.down) / 10
+
+                            return (roundedWeatherLat == roundedLat && roundedWeatherLon == roundedLon) ? index : nil
+                        }
+
+                        // Update the current property for all matching indices
+                        for index in matchingIndices {
+                            currentWeatherList[index].current = currentWeather.current
                         }
                     }
                 } catch {
