@@ -9,8 +9,13 @@ import SwiftUI
 
 struct HomeScreen: View {
 
+    // MARK: Properties
+
+    /// variable that retrieves the persisting city coordinates from previous session
     @AppStorage("selectedCityCords")
     var selectedCityCords = ""
+
+    /// Manages the state and logic for this view.
     var viewModel = ViewModel()
 
     // MARK: Body
