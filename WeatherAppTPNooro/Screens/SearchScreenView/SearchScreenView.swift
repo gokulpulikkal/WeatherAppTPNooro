@@ -7,20 +7,25 @@
 
 import SwiftUI
 
+/// A view that shows the search bar and the search results
 struct SearchScreenView: View {
+    // MARK: Properties
 
-    @State var searchKey = ""
+    /// Manages the state and logic for this view.
     @State var viewModel = ViewModel()
+
+    /// A variable that holds value weather the search text field is in focus or not
     @FocusState var isSearchFieldFocused: Bool
+
+    /// variable that saves the selected city's coordinates string to apps persistent storage
     @AppStorage("selectedCityCords")
     var selectedCityCords = ""
-    @State var selectedWeatherLocation: CurrentWeather? = nil
+
+    // MARK: Body
 
     var body: some View {
         ZStack {
-            Rectangle()
-                .foregroundStyle(.backgroundColorPrimary)
-                .opacity(isSearchFieldFocused || !viewModel.currentWeatherList.isEmpty ? 1 : 0)
+            backgroundView
             VStack {
                 searchTextFieldView
                     .padding(.top, 24)
@@ -35,7 +40,7 @@ struct SearchScreenView: View {
                         List(
                             viewModel.currentWeatherList,
                             id: \.self,
-                            selection: $selectedWeatherLocation,
+                            selection: $viewModel.selectedWeatherLocation,
                             rowContent: { currentWeather in
                                 getLocationListRow(currentWeather: currentWeather)
                                     .listRowSeparator(.hidden)
@@ -51,17 +56,17 @@ struct SearchScreenView: View {
                 .opacity(isSearchFieldFocused || !viewModel.currentWeatherList.isEmpty ? 1 : 0)
             }
         }
-        .onChange(of: searchKey) {
-            if searchKey.isEmpty {
+        .onChange(of: viewModel.searchKey) {
+            if viewModel.searchKey.isEmpty {
                 viewModel.clearSearchResults()
             } else {
                 Task {
-                    await viewModel.locations(for: searchKey)
+                    await viewModel.locations(for: viewModel.searchKey)
                 }
             }
         }
-        .onChange(of: selectedWeatherLocation) {
-            if let selectedWeatherLocation {
+        .onChange(of: viewModel.selectedWeatherLocation) {
+            if let selectedWeatherLocation = viewModel.selectedWeatherLocation {
                 selectedCityCords = "\(selectedWeatherLocation.location.lat),\(selectedWeatherLocation.location.lon)"
                 dismissSearchResultView()
             }
@@ -72,9 +77,12 @@ struct SearchScreenView: View {
 }
 
 extension SearchScreenView {
+    // MARK: Subviews
+
+    /// A view for getting input from the user for the city search
     var searchTextFieldView: some View {
         HStack {
-            TextField(text: $searchKey, label: {
+            TextField(text: $viewModel.searchKey, label: {
                 Text("Search Location")
                     .font(.system(size: 15))
                     .foregroundStyle(.textColorTertiary)
@@ -98,6 +106,28 @@ extension SearchScreenView {
         .background(RoundedRectangle(cornerRadius: 16).foregroundStyle(.boxBackground))
     }
 
+    /// A view that will act as background covering full screen when the search is in progress or search bar gets focus
+    var backgroundView: some View {
+        Rectangle()
+            .foregroundStyle(.backgroundColorPrimary)
+            .opacity(isSearchFieldFocused || !viewModel.currentWeatherList.isEmpty ? 1 : 0)
+    }
+
+    /// A view that will show the error view when search API returns empty results or in case of API errors
+    var errorMessageView: some View {
+        VStack {
+            Spacer()
+            Image(systemName: "exclamationmark.circle")
+                .resizable()
+                .frame(width: 50, height: 50)
+            Text("The searched city is not found")
+                .font(.system(size: 20))
+                .bold()
+            Spacer()
+        }
+    }
+
+    /// A view that will show the search result city name and it's weather details
     func getLocationListRow(currentWeather: CurrentWeather) -> some View {
         HStack {
             VStack(alignment: .leading, spacing: 0) {
@@ -137,19 +167,10 @@ extension SearchScreenView {
         .background(RoundedRectangle(cornerRadius: 16).foregroundStyle(.boxBackground))
     }
 
-    var errorMessageView: some View {
-        VStack {
-            Spacer()
-            Image(systemName: "exclamationmark.circle")
-                .resizable()
-                .frame(width: 50, height: 50)
-            Text("The searched city is not found")
-                .font(.system(size: 20))
-                .bold()
-            Spacer()
-        }
-    }
+    // MARK: Functions
 
+    /// A function to dismiss the full screen search view.
+    /// the view should show only search bar once this function is called
     func dismissSearchResultView() {
         UIApplication.shared.sendAction(
             #selector(UIResponder.resignFirstResponder),
@@ -158,7 +179,6 @@ extension SearchScreenView {
             for: nil
         )
         viewModel.clearSearchResults()
-        searchKey = ""
     }
 }
 
