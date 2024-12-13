@@ -67,6 +67,7 @@ struct SearchScreenView: View {
             }
         }
         .animation(.bouncy, value: viewModel.currentWeatherList)
+        .animation(.bouncy, value: isSearchFieldFocused)
     }
 }
 
@@ -138,6 +139,7 @@ extension SearchScreenView {
 
     var errorMessageView: some View {
         VStack {
+            Spacer()
             Image(systemName: "exclamationmark.circle")
                 .resizable()
                 .frame(width: 50, height: 50)

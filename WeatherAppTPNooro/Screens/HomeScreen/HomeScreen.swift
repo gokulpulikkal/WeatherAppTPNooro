@@ -42,6 +42,7 @@ struct HomeScreen: View {
         .task {
             await viewModel.getCurrentWeather(for: selectedCityCords)
         }
+        .animation(.bouncy, value: viewModel.loadState)
     }
 
 }
