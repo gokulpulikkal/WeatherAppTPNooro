@@ -11,6 +11,9 @@ struct HomeScreen: View {
 
     // MARK: Properties
 
+    /// Environment object that is observed to know the network changes
+    @Environment(NetworkMonitor.self) private var networkMonitor
+
     /// variable that retrieves the persisting city id from previous session
     @AppStorage("selectedCityId")
     var selectedCityId: Int = -1
@@ -39,6 +42,8 @@ struct HomeScreen: View {
             }
             .opacity(selectedCityId < 0 ? 0 : 1)
             SearchScreenView()
+            NoNetworkScreen(isNetworkConnected: networkMonitor.isConnected)
+                .opacity(networkMonitor.isConnected ? 0 : 1)
         }
         .ignoresSafeArea(.keyboard)
         .onChange(of: selectedCityId) {
@@ -85,4 +90,5 @@ extension HomeScreen {
 
 #Preview {
     HomeScreen()
+        .environment(NetworkMonitor())
 }
